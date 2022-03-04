@@ -3,6 +3,8 @@ import pandas as pd
 import os
 import pymongo
 
+import send_mail
+
 # Initialize connection.
 client = pymongo.MongoClient(**st.secrets["mongo"])
 
@@ -11,8 +13,9 @@ st.title('Rifa literária entre amigos')
 st.markdown(
     "Olá! Obrigada por querer ajudar a tornar este sonho realidade. Comprando essa rifa você estará ajudando a transformar meus livros em audiobooks, "
     "fazendo com que suas mensagens de esperança e amor cheguem a mais pessoas. O prêmio será os livros de 1 a 5 de Anne de Green Gables, da [Editora Pedra Azul]() "
-    ". Afinal de contas, quem passa uma mensagem positiva, apesar das adversidades, é Anne. Que o(a) ganhador(a) possa aprender boas lições com essa ruivinha como eu aprendi."
-    "A você, desejo uma BOAVIAGEM na leitura, e a todos boa sorte!")
+    ". Afinal de contas, quem passa uma mensagem positiva, apesar das adversidades, é Anne. Que o(a) ganhador(a) possa aprender boas lições com essa ruivinha como eu aprendi. "
+    "A você, desejo uma BOAVIAGEM na leitura, e a todos boa sorte! Ah, o sorteio será realizado no dia 31/07/2022 em uma live no Instagram @pagina90_. "
+    "Segue lá pra não perder nenhum detalhe ;-)")
  
 def read_picked_numbers():
     db = client.test
@@ -73,12 +76,17 @@ if len(name) > 0:
         if option != "Nenhum":
             if st.button('Confirmar'):
                 write_new_number(name, email, int(option))
+                send_mail.send(to=email, to_name=name, number=option)
                 st.markdown(
-                    f"**Muito obrigada por contrubuir com a literatura (e a cultura nacional), {name}!"
-                    "Para concluir a reserva da rifa, você pode **transferir os R$10 para "
-                    "o seguinte PIX**, no nome de **Amanda Pessoa Neves Boaviagem Ribeiro**:")
+                    f"**Muito obrigada por contrubuir com a literatura (e a cultura nacional), {name}!** "
+                    "Para concluir a reserva da rifa, você pode transferir os R$10 para "
+                    "o seguinte PIX, no nome de **Amanda Pessoa Neves Boaviagem Ribeiro**:")
 
                 st.subheader("amanda.pessoa.mrc@gmail.com")
+
+                st.markdown(
+                    f"Não se preocupe: enviamos um e-mail para você com essas e outras informações. "
+                    "**Guarde este e-mail! É o seu comprovante de reserva**")
 
                 st.markdown(
                     "Para escolher um novo valor, por favor "
